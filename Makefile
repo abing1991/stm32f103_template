@@ -12,10 +12,12 @@ OBJCOPY   = $(CROSS_COMPILE)objcopy
 SIZE      = $(CROSS_COMPILE)size
 
 SOURCE    = src
+SOURCE    += Libraries/hardware
 
 BIN  	  = bin
 
 INCLUDEPATH += -I./inc
+INCLUDEPATH += -I./Libraries/hardware
 INCLUDEPATH += -I./Libraries/STM32F10x_StdPeriph_Driver/inc
 INCLUDEPATH += -I./Libraries/CMSIS/CM3/CoreSupport
 INCLUDEPATH += -I./Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x
@@ -24,24 +26,15 @@ COMMONFLAGS = -mcpu=cortex-m3 -mthumb -mlittle-endian
 COMMONFLAGS += -msoft-float
 CFLAGS    = $(COMMONFLAGS)
 CFLAGS    += -ggdb3 $(INCLUDEPATH) -c
-ifeq ($(DEBUG),1)
-CFLAGS    += -O0
-#CFLAGS    += -Og # optimized debugging
-else
-CFLAGS    += -Os 
-endif
+
+# endif
 CFLAGS    += -Wall -Wextra
 CFLAGS    += -finline-functions -fomit-frame-pointer
 CFLAGS    += -fno-builtin -fno-exceptions
 CLFAGS    += -nostdlib
 CFLAGS    += -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -ffreestanding -fno-move-loop-invariants
-ifeq ($(DEBUG),0)
-CFLAGS    += -flto
-endif
 CFLAGS    += -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER -DHSE_VALUE=8000000UL -DSYSCLK_FREQ_72MHz=72000000
-ifeq ($(DEBUG),1)
-CFLAGS    += -D_DEBUG -DUSE_FULL_ASSERT
-endif
+
 CFLAGS_A  = $(CFLAGS) -D_ASSEMBLER_
 CXXFLAGS  = $(CFLAGS)
 
@@ -59,8 +52,8 @@ LDFLAGS   += $(LDLIBS)
 
 # Find all source files
 
-#SRC_CPP = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.cpp))
-SRC_C   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.c))
+SRC_CPP = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.cpp))
+#SRC_C   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.c))
 #SRC_S   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.s))
 
 SRC_C +=  ./Libraries/CMSIS/CM3/DeviceSupport/ST/STM32F10x/system_stm32f10x.c
